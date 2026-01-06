@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data files (large datasets)
+data/
+*.csv
+!requirements.txt
+
+# Model files (can be large)
+models/*.pkl
+models/*.txt
+*.pkl
+
+# Output files
+output/
+results/
+*.log
+
+# OS specific
+.DS_Store
+Thumbs.db
+*.bak
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Testing
+test_results*.csv
+*.pyc
+
+# Archive (optional - uncomment if you want to exclude)
+# archive/
+
+# Temporary files
+*.tmp
+*.temp
+reorganize.ps1
+
+# Environment variables
+.env
+.env.local
+
+# Large files
+*.h5
+*.hdf5
+*.parquet

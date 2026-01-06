@@ -1,0 +1,31 @@
+{
+  "n_rows": 244114,
+  "n_customers": 3946,
+  "n_products": 28,
+  "features": [
+    "Cust_Avg",
+    "Prod_Avg",
+    "Geo_Avg",
+    "Cust_Prod_Avg",
+    "RECENT_AVG",
+    "SALES_LAG_1",
+    "SALES_LAG_2",
+    "SALES_LAG_3",
+    "SALES_ROLL_MEAN_3",
+    "SALES_ROLL_STD_3",
+    "MONTH",
+    "Is_Summer",
+    "PROMO_SEASONALITY_INDEX",
+    "PROMO_FREQ",
+    "PROMO_SUM",
+    "PROMO_SUM_OVER_PROD",
+    "CUST_PROD_OVER_PROD",
+    "RECENT_X_PROMO",
+    "YOY_ABS_12",
+    "YOY_PCT_12",
+    "TREND_SLOPE_3",
+    "TREND_SLOPE_6",
+    "PCT_CHANGE_LAG1",
+    "PCT_CHANGE_LAG3"
+  ]
+}
