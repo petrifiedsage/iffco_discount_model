@@ -14,8 +14,8 @@
 ### `/models/`
 Trained model files (*.pkl, *.csv)
 - `task2_reboot_model.pkl` - Main forecasting model
-- `task2_reboot_metadata.pkl` - Model metadata
-- `task2_reboot_states.pkl` - Customer-product states
+- `task2_reboot_metada0ta.pkl` - Model metadata
+- `task2_reboot_states.pkl` - Customer-product 0
 - `history_monthly.pkl` - Historical sales data
 - `product_seasonality_correct.csv` - Seasonality patterns
 - Task 1 and Task 3 models

@@ -31,6 +31,7 @@ MODEL_DIR.mkdir(exist_ok=True)
 MODEL_PATH = MODEL_DIR / "task2_reboot_model.pkl"
 STATES_PATH = MODEL_DIR / "task2_reboot_states.pkl"
 METADATA_PATH = MODEL_DIR / "task2_reboot_metadata.pkl"
+PROMO_PATH = Path("results/tactic_promo_intensity.csv")
 
 # ============================================================================
 # STEP 1: Load Contract_Claim_Dump files (2022-2025)
@@ -134,6 +135,34 @@ print(f"Customer-Product combinations: {df_monthly.groupby(['CUSTOMER', 'PRODUCT
 print("\n[STEP 3] Creating features...")
 
 df = df_monthly.copy()
+
+# Merge promo intensity (product-level) if available
+if PROMO_PATH.exists():
+    promo_df = pd.read_csv(PROMO_PATH)
+    if 'YEAR_MONTH' in promo_df.columns:
+        promo_df['YEAR_MONTH'] = pd.PeriodIndex(promo_df['YEAR_MONTH'], freq='M')
+    promo_df = promo_df.rename(columns={
+        'promo_amount': 'PROMO_AMOUNT',
+        'promo_count': 'PROMO_COUNT'
+    })
+    df = df.merge(
+        promo_df[['PRODUCT_GROUP', 'YEAR_MONTH', 'PROMO_AMOUNT', 'PROMO_COUNT']],
+        on=['PRODUCT_GROUP', 'YEAR_MONTH'],
+        how='left'
+    )
+    df['PROMO_AMOUNT'] = df['PROMO_AMOUNT'].fillna(0.0)
+    df['PROMO_COUNT'] = df['PROMO_COUNT'].fillna(0.0)
+    df['PROMO_LOG'] = np.log1p(df['PROMO_AMOUNT'])
+    df['PROMO_COUNT_LOG'] = np.log1p(df['PROMO_COUNT'])
+    df['PROMO_3M_AVG'] = df.groupby('PRODUCT_GROUP')['PROMO_AMOUNT'].transform(
+        lambda x: x.shift(1).rolling(3, min_periods=1).mean()
+    ).fillna(0.0)
+else:
+    df['PROMO_AMOUNT'] = 0.0
+    df['PROMO_COUNT'] = 0.0
+    df['PROMO_LOG'] = 0.0
+    df['PROMO_COUNT_LOG'] = 0.0
+    df['PROMO_3M_AVG'] = 0.0
 
 # Create lag features by Customer-Product group
 for lag in [1, 3, 6, 12]:
@@ -252,6 +281,7 @@ feature_cols = [
     'LAG_3_AVG', 'LAG_6_AVG',
     'CUSTOMER_AVG', 'PRODUCT_AVG', 'CUSTOMER_PRODUCT_AVG',
     'TREND_3M',
+    'PROMO_AMOUNT', 'PROMO_COUNT', 'PROMO_LOG', 'PROMO_COUNT_LOG', 'PROMO_3M_AVG',
     'MONTH', 'QUARTER', 'YEAR', 'IS_SUMMER',
     'SEASONALITY_INDEX'
 ]
