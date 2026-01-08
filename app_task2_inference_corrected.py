@@ -119,7 +119,13 @@ def forecast_sales(customer_name, product_group, months_ahead=3):
             'QUARTER': quarter,
             'YEAR': year,
             'IS_SUMMER': is_summer,
-            'SEASONALITY_INDEX': seasonality_index
+            'SEASONALITY_INDEX': seasonality_index,
+            # Promo features (set to 0 for forecast period - assuming no promos)
+            'PROMO_AMOUNT': 0,
+            'PROMO_COUNT': 0,
+            'PROMO_LOG': 0,
+            'PROMO_COUNT_LOG': 0,
+            'PROMO_3M_AVG': 0
         }
         
         # Ensure feature order matches training

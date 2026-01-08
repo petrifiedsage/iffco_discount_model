@@ -6,7 +6,7 @@ import os
 import plotly.express as px
 import plotly.graph_objects as go
 import datetime
-import app_task2_inference_snippet as task2
+import traceback
 
 # --- CONFIGURATION ---
 st.set_page_config(
@@ -22,7 +22,6 @@ st.title("🚀 IFFCO Intelligent Trade Planner (V7 Enterprise)")
 # --- SIDEBAR & LOADING ---
 st.sidebar.header("⚙️ System Status")
 
-@st.cache_resource
 @st.cache_resource
 def load_resources():
     try:
@@ -54,16 +53,42 @@ def load_resources():
         else:
              seg_data = None
 
-        return disc_model, disc_meta, task2_model, metadata, states, seasonality_df, history_df, seg_data
+        # ---------- Task 2 (Ensemble outputs) ----------
+        ensemble_predictions = None
+        ensemble_path = os.path.join(os.path.dirname(__file__), 'output', 'task2_improved_v4_ensemble_predictions.csv')
+        if os.path.exists(ensemble_path):
+            try:
+                ensemble_predictions = pd.read_csv(ensemble_path)
+            except Exception as read_err:
+                st.sidebar.warning(f"Could not read ensemble outputs: {read_err}")
+
+        # ---------- Task 2 (2025 Validation & 2026 Retrained Forecast) ----------
+        validation_2025 = None
+        validation_path = os.path.join(os.path.dirname(__file__), 'output', 'task2_2025_validation_retrained.csv')
+        if os.path.exists(validation_path):
+            try:
+                validation_2025 = pd.read_csv(validation_path)
+            except Exception as read_err:
+                st.sidebar.warning(f"Could not read 2025 validation: {read_err}")
+
+        forecast_2026 = None
+        forecast_path = os.path.join(os.path.dirname(__file__), 'output', 'task2_2026_forecast_retrained.csv')
+        if os.path.exists(forecast_path):
+            try:
+                forecast_2026 = pd.read_csv(forecast_path)
+            except Exception as read_err:
+                st.sidebar.warning(f"Could not read 2026 forecast: {read_err}")
+
+        return disc_model, disc_meta, task2_model, metadata, states, seasonality_df, history_df, seg_data, ensemble_predictions, validation_2025, forecast_2026
 
     except Exception as e:
         st.sidebar.error(f"Model Load Error: {e}")
-        # Return 8 Nones to match the unpacking count
-        return None, None, None, None, None, None, None, None
+        # Return 9 Nones to match the unpacking count
+        return None, None, None, None, None, None, None, None, None
 
 
 # Load Models
-discount_model, disc_meta, task2_model, metadata, states, seasonality_df, history_df, segmentation_data = load_resources()
+discount_model, disc_meta, task2_model, metadata, states, seasonality_df, history_df, segmentation_data, ensemble_predictions, validation_2025, forecast_2026 = load_resources()
 
 if discount_model and task2_model:
     st.sidebar.success("✅ Models Loaded")
@@ -72,7 +97,7 @@ else:
     st.sidebar.warning("⚠️ Models missing. Please check file names.")
 
 # --- TABS ---
-tab1, tab2, tab3 = st.tabs(["💰 Task 1: Discount Optimizer", "📈 Task 2: Sales Forecast (V7)", "🧩 Task 3: Strategy Matrix"])
+tab1, tab2, tab3 = st.tabs(["💰 Task 1: Discount Optimizer", "📈 Task 2: Sales Forecast", "🧩 Task 3: TACTIC Recommendation"])
 
 
 # ==========================================
@@ -121,160 +146,258 @@ with tab1:
 with tab2:
     st.subheader("Sales Forecasting (Corrected Model)")
     st.caption("Uses Contract_Claim_Dump data with actual product categories")
-    
-    if metadata and task2_model:
-        c1, c2, c3 = st.columns(3)
-        
-        with c1:
-            # Get customers from states
-            available_customers = sorted(set([k[0] for k in states.keys()]))
-            selected_customer = st.selectbox("Customer", available_customers)
-        
-        with c2:
-            # Get products for selected customer
-            customer_products = sorted(set([k[1] for k in states.keys() if k[0] == selected_customer]))
-            selected_product = st.selectbox("Product Group", customer_products if customer_products else metadata['products'])
-        
-        with c3:
-            forecast_months = st.slider("Forecast Period (Months)", 1, 12, 6)
-        
-        if st.button("📈 Generate Forecast", type="primary"):
-            try:
-                from datetime import datetime
-                import app_task2_inference_corrected as task2_inf
-                
-                # Load the inference module's model (ensure it uses the same artifacts)
-                task2_inf.model = task2_model
-                task2_inf.metadata = metadata
-                task2_inf.states = states
-                task2_inf.df_seasonality = seasonality_df
-                
-                # Generate forecast
-                result = task2_inf.forecast_sales(selected_customer, selected_product, months_ahead=forecast_months)
-                
-                if result['status'] == 'success':
-                    st.success(f"✓ Forecast generated for {selected_customer} - {selected_product}")
-                    
-                    # Display metrics
-                    forecasts = result['forecast']
-                    total_forecast = sum([f['forecast'] for f in forecasts])
-                    avg_seasonality = np.mean([f['seasonality'] for f in forecasts])
-                    
-                    m1, m2, m3 = st.columns(3)
-                    m1.metric("Total Forecast", f"${total_forecast:,.0f}")
-                    m2.metric("Avg Monthly", f"${total_forecast/len(forecasts):,.0f}")
-                    m3.metric("Avg Seasonality", f"{avg_seasonality:.2f}x")
-                    
-                    # Create forecast table
-                    forecast_df = pd.DataFrame(forecasts)
-                    
-                    # Plot
-                    fig = go.Figure()
-                    
-                    # Historical data (if available)
-                    if history_df is not None:
-                        hist = history_df[(history_df['CUSTOMER'] == selected_customer) & 
-                                         (history_df['PRODUCT_GROUP'] == selected_product)]
-                        if not hist.empty:
-                            fig.add_trace(go.Scatter(
-                                x=hist['Plot_Date'],
-                                y=hist['SALES'],
-                                mode='lines+markers',
-                                name='Historical',
-                                line=dict(color='gray', width=2)
-                            ))
-                    
-                    # Forecast data
-                    now = datetime.now()
-                    forecast_dates = [datetime(now.year if f['month'] > now.month else now.year + 1, f['month'], 1) 
-                                     for f in forecasts]
-                    
-                    fig.add_trace(go.Scatter(
-                        x=forecast_dates,
-                        y=forecast_df['forecast'],
-                        mode='lines+markers',
-                        name='Forecast',
-                        line=dict(color='#1f77b4', width=3, dash='dot')
-                    ))
-                    
-                    fig.update_layout(
-                        title=f"Sales Forecast: {selected_product}",
-                        xaxis_title="Date",
-                        yaxis_title="Sales (AED)",
-                        hovermode='x unified'
-                    )
-                    
-                    st.plotly_chart(fig, use_container_width=True)
-                    
-                    # Show table
-                    st.dataframe(
-                        forecast_df[['month_name', 'forecast', 'seasonality', 'confidence']]
-                        .rename(columns={
-                            'month_name': 'Month',
-                            'forecast': 'Forecast (AED)',
-                            'seasonality': 'Seasonality',
-                            'confidence': 'Confidence'
-                        })
-                        .style.format({
-                            'Forecast (AED)': '${:,.2f}',
-                            'Seasonality': '{:.2f}x',
-                            'Confidence': '{:.0%}'
-                        }),
-                        hide_index=True,
-                        use_container_width=True
-                    )
-                else:
-                    st.error(result['message'])
-                    
-            except Exception as e:
-                st.error(f"Forecast Error: {e}")
-                import traceback
-                st.code(traceback.format_exc())
-    else:
-        st.error("❌ Model not loaded. Please run train_task2_corrected.py first.")
+
+    tab_forecast, tab_val2025, tab_forecast2026 = st.tabs(["On-Demand Forecast", "2025 Validation", "2026 Forecast"])
+
+    with tab_forecast:
+        if metadata and task2_model:
+            c1, c2, c3 = st.columns(3)
+
+            with c1:
+                available_customers = sorted(set([k[0] for k in states.keys()]))
+                cust_search = st.text_input("Search Customer")
+                cust_options = [c for c in available_customers if (cust_search.strip().lower() in c.lower())] if cust_search else available_customers
+                selected_customer = st.selectbox("Customer", cust_options)
+
+            with c2:
+                customer_products = sorted(set([k[1] for k in states.keys() if k[0] == selected_customer]))
+                prod_search = st.text_input("Search Product")
+                prod_options = [p for p in customer_products if (prod_search.strip().lower() in p.lower())] if prod_search else customer_products
+                selected_product = st.selectbox("Product Group", prod_options if prod_options else (customer_products if customer_products else metadata['products']))
+
+            with c3:
+                forecast_months = st.slider("Forecast Period (Months)", 1, 12, 6)
+
+            if st.button("📈 Generate Forecast", type="primary"):
+                try:
+                    from datetime import datetime
+                    import sys
+                    sys.path.insert(0, os.path.dirname(__file__))
+                    import app_task2_inference_corrected as task2_inf
+
+                    state_key = (selected_customer, selected_product)
+                    if state_key not in states:
+                        st.error(f"❌ No historical data for {selected_customer} + {selected_product}")
+                        st.info(f"Available combinations: {len(states)}")
+                    else:
+                        task2_inf.model = task2_model
+                        task2_inf.metadata = metadata
+                        task2_inf.states = states
+                        task2_inf.df_seasonality = seasonality_df
+
+                        result = task2_inf.forecast_sales(selected_customer, selected_product, months_ahead=forecast_months)
+
+                        if result['status'] == 'success':
+                            st.success(f"✓ Forecast generated for {selected_customer} - {selected_product}")
+
+                            forecasts = result['forecast']
+                            total_forecast = sum([f['forecast'] for f in forecasts])
+                            avg_seasonality = np.mean([f['seasonality'] for f in forecasts])
+
+                            m1, m2, m3 = st.columns(3)
+                            m1.metric("Total Forecast", f"${total_forecast:,.0f}")
+                            m2.metric("Avg Monthly", f"${total_forecast/len(forecasts):,.0f}")
+                            m3.metric("Avg Seasonality", f"{avg_seasonality:.2f}x")
+
+                            forecast_df = pd.DataFrame(forecasts)
+
+                            fig = go.Figure()
+
+                            if history_df is not None:
+                                hist = history_df[(history_df['CUSTOMER'] == selected_customer) & (history_df['PRODUCT_GROUP'] == selected_product)]
+                                if not hist.empty:
+                                    fig.add_trace(go.Scatter(x=hist['Plot_Date'], y=hist['SALES'], mode='lines+markers', name='Historical', line=dict(color='gray', width=2)))
+
+                            now = datetime.now()
+                            forecast_dates = [datetime(now.year if f['month'] > now.month else now.year + 1, f['month'], 1) for f in forecasts]
+
+                            fig.add_trace(go.Scatter(x=forecast_dates, y=forecast_df['forecast'], mode='lines+markers', name='Forecast', line=dict(color='#1f77b4', width=3, dash='dot')))
+                            fig.update_layout(title=f"Sales Forecast: {selected_product}", xaxis_title="Date", yaxis_title="Sales (AED)", hovermode='x unified')
+                            st.plotly_chart(fig, width='stretch')
+
+                            st.dataframe(
+                                forecast_df[['month_name', 'forecast', 'seasonality', 'confidence']]
+                                .rename(columns={'month_name': 'Month', 'forecast': 'Forecast (AED)', 'seasonality': 'Seasonality', 'confidence': 'Confidence'})
+                                .style.format({'Forecast (AED)': '${:,.2f}', 'Seasonality': '{:.2f}x', 'Confidence': '{:.0%}'}),
+                                hide_index=True,
+                                width='stretch'
+                            )
+                        else:
+                            st.error(result['message'])
+                except Exception as e:
+                    st.error(f"Forecast Error: {e}")
+                    st.code(traceback.format_exc())
+        else:
+            st.error("❌ Model not loaded. Please run train_task2_corrected.py first.")
+
+    with tab_val2025:
+        st.subheader("📊 2025 Validation Results (Predicted vs Actual)")
+        st.caption("Model validation on 2025 data - Retrained on 2022-2024")
+
+        if validation_2025 is not None and len(validation_2025) > 0:
+            val_df = validation_2025.copy()
+
+            val_df['TOTAL_SALES'] = pd.to_numeric(val_df['TOTAL_SALES'], errors='coerce')
+            val_df['PREDICTED_SALES'] = pd.to_numeric(val_df['PREDICTED_SALES'], errors='coerce')
+            val_df['APE'] = pd.to_numeric(val_df['APE'], errors='coerce')
+
+            m1, m2, m3, m4 = st.columns(4)
+            with m1:
+                st.metric("Median APE", f"{val_df['APE'].median():.2f}%")
+            with m2:
+                st.metric("Mean APE", f"{val_df['APE'].mean():.2f}%")
+            with m3:
+                st.metric("Actual Total (2025)", f"${val_df['TOTAL_SALES'].sum():,.0f}")
+            with m4:
+                st.metric("Predicted Total (2025)", f"${val_df['PREDICTED_SALES'].sum():,.0f}")
+
+            col1, col2 = st.columns(2)
+            with col1:
+                products = ["All"] + sorted(val_df['PRODUCT_GROUP'].unique())
+                selected_product_val = st.selectbox("Filter by Product", products)
+            with col2:
+                seasons = ["All"] + sorted(val_df['SEASON'].unique())
+                selected_season_val = st.selectbox("Filter by Season", seasons)
+
+            filtered_val = val_df.copy()
+            if selected_product_val != "All":
+                filtered_val = filtered_val[filtered_val['PRODUCT_GROUP'] == selected_product_val]
+            if selected_season_val != "All":
+                filtered_val = filtered_val[filtered_val['SEASON'] == selected_season_val]
+
+            display_val = filtered_val[['PRODUCT_GROUP', 'SEASON', 'TOTAL_SALES', 'PREDICTED_SALES', 'APE']].copy()
+            display_val['TOTAL_SALES'] = display_val['TOTAL_SALES'].apply(lambda x: f"${x:,.0f}" if pd.notna(x) else "N/A")
+            display_val['PREDICTED_SALES'] = display_val['PREDICTED_SALES'].apply(lambda x: f"${x:,.0f}" if pd.notna(x) else "N/A")
+            display_val['APE'] = display_val['APE'].apply(lambda x: f"{x:.2f}%" if pd.notna(x) else "N/A")
+
+            st.dataframe(display_val, hide_index=True, width='stretch')
+
+            st.download_button(label="📥 Download 2025 Validation Results", data=validation_2025.to_csv(index=False), file_name="task2_2025_validation_retrained.csv", mime="text/csv")
+
+            if selected_product_val != "All" or selected_season_val != "All":
+                chart_data = filtered_val.sort_values(['PRODUCT_GROUP', 'SEASON'])
+                chart_data['Label'] = chart_data['PRODUCT_GROUP'] + ' - ' + chart_data['SEASON']
+
+                fig = go.Figure(data=[
+                    go.Bar(name='Actual', x=chart_data['Label'], y=chart_data['TOTAL_SALES'], marker_color='lightblue'),
+                    go.Bar(name='Predicted', x=chart_data['Label'], y=chart_data['PREDICTED_SALES'], marker_color='orange')
+                ])
+                fig.update_layout(title="2025: Actual vs Predicted Sales", xaxis_title="Product - Season", yaxis_title="Sales (AED)", barmode='group', height=400)
+                st.plotly_chart(fig, width='stretch')
+        else:
+            st.info("Run scripts/task2_retrain_2024_validate_2025.py to generate 2025 validation results.")
+
+    with tab_forecast2026:
+        st.subheader("📊 2026 Sales Forecast (Retrained Model)")
+        st.caption("Forecast based on 2022-2024 training data validated on 2025 - Median APE: 12.35%")
+
+        if forecast_2026 is not None and len(forecast_2026) > 0:
+            forecast_sorted = forecast_2026.copy()
+
+            numeric_cols = ['Winter', 'Spring', 'Summer', 'Fall', 'Festival', 'TOTAL_2026']
+            for col in numeric_cols:
+                if col in forecast_sorted.columns:
+                    forecast_sorted[col] = pd.to_numeric(forecast_sorted[col], errors='coerce')
+
+            if 'TOTAL_2026' in forecast_sorted.columns:
+                forecast_sorted = forecast_sorted.sort_values('TOTAL_2026', ascending=False)
+
+            m1, m2, m3 = st.columns(3)
+            with m1:
+                total_2026 = forecast_2026[numeric_cols].sum().sum() if numeric_cols[0] in forecast_2026.columns else 0
+                st.metric("Total 2026 Forecast", f"${total_2026:,.0f}")
+            with m2:
+                st.metric("Products Forecasted", f"{len(forecast_2026)}")
+            with m3:
+                st.metric("Seasons Covered", "5 (Winter, Spring, Summer, Fall, Festival)")
+
+            st.write("**Forecast by Product and Season (All Products):**")
+            display_full = forecast_sorted[['PRODUCT_GROUP'] + [c for c in numeric_cols if c in forecast_sorted.columns]].copy()
+            for col in numeric_cols:
+                if col in display_full.columns:
+                    display_full[col] = display_full[col].apply(lambda x: f"${x:,.0f}" if pd.notna(x) else "N/A")
+
+            st.dataframe(display_full, hide_index=True, width='stretch')
+
+            st.download_button(label="📥 Download 2026 Forecast", data=forecast_2026.to_csv(index=False), file_name="task2_2026_forecast_retrained.csv", mime="text/csv")
+        else:
+            st.info("Run scripts/task2_retrain_2024_validate_2025.py to generate 2026 forecast.")
     
 # ==========================================
 # TAB 3: STRATEGY MATRIX
 # ==========================================
 with tab3:
-    st.subheader("Customer Strategy Matrix")
-    if segmentation_data is not None and len(segmentation_data) > 0:
-        try:
-            plot_df = segmentation_data.reset_index() if hasattr(segmentation_data, 'reset_index') else segmentation_data
-            
-            # Check if required columns exist
-            required_cols = ['Total_Spend', 'Claim_Count', 'Avg_Claim_Size', 'Segment_Name', 'CUSTOMER_NAME']
-            missing_cols = [col for col in required_cols if col not in plot_df.columns]
-            
-            if missing_cols:
-                st.warning(f"Segmentation data missing columns: {missing_cols}")
-                st.info("Available columns: " + ", ".join(plot_df.columns.tolist()[:10]))
-                st.caption("Please run task3_segmentation.py to generate proper segmentation data")
-            else:
-                valid_plot_df = plot_df[plot_df['Total_Spend'] > 1].copy()
-                valid_plot_df['Bubble_Size'] = valid_plot_df['Avg_Claim_Size'].abs().fillna(1)
-                
-                search_cust = st.multiselect("Highlight Specific Customers:", valid_plot_df['CUSTOMER_NAME'].unique())
-                
-                if search_cust:
-                    valid_plot_df['Color'] = valid_plot_df['CUSTOMER_NAME'].apply(lambda x: "Selected" if x in search_cust else "Others")
-                    color_map = {"Selected": "red", "Others": "lightgrey"}
-                    fig = px.scatter(valid_plot_df, x="Claim_Count", y="Total_Spend",
-                                     size="Bubble_Size", color="Color", color_discrete_map=color_map,
-                                     hover_name="CUSTOMER_NAME", log_x=True, log_y=True, 
-                                     title="Investment vs. Frequency")
-                else:
-                    fig = px.scatter(valid_plot_df, x="Claim_Count", y="Total_Spend",
-                                     size="Bubble_Size", color="Segment_Name",
-                                     hover_name="CUSTOMER_NAME", log_x=True, log_y=True,
-                                     title="Investment vs. Frequency")
+    st.subheader("Best Tactic per Product (Task 3)")
+    try:
+        results_dir = os.path.join(os.path.dirname(__file__), 'results')
+        # Prefer model-ranked outputs, fallback to heuristic if not present
+        best_model_path = os.path.join(results_dir, 'task3_best_tactic_per_product_model.csv')
+        best_heur_path = os.path.join(results_dir, 'task3_best_tactic_per_product.csv')
+        full_model_path = os.path.join(results_dir, 'task3_tactic_scores_model.csv')
+        full_heur_path = os.path.join(results_dir, 'task3_tactic_scores_full.csv')
 
-                st.plotly_chart(fig, use_container_width=True)
-                sel_seg = st.selectbox("Filter Segment", plot_df['Segment_Name'].unique())
-                st.dataframe(plot_df[plot_df['Segment_Name'] == sel_seg][['CUSTOMER_NAME', 'Total_Spend', 'Claim_Count']], use_container_width=True)
-        except Exception as e:
-            st.error(f"Error displaying segmentation data: {e}")
-            st.caption("Please run task3_segmentation.py to generate proper customer segments")
-    else:
-        st.warning("Segmentation data not available.")
-        st.info("Run task3_segmentation.py to generate customer segmentation analysis")
+        if os.path.exists(best_model_path):
+            best_df = pd.read_csv(best_model_path)
+        elif os.path.exists(best_heur_path):
+            best_df = pd.read_csv(best_heur_path)
+        else:
+            best_df = None
+
+        if os.path.exists(full_model_path):
+            full_df = pd.read_csv(full_model_path)
+        elif os.path.exists(full_heur_path):
+            full_df = pd.read_csv(full_heur_path)
+        else:
+            full_df = None
+
+        if best_df is None or full_df is None or best_df.empty or full_df.empty:
+            st.warning("Task 3 outputs not found. Run scripts/training/task3_best_tactic_classifier.py")
+        else:
+            products = sorted(best_df['PRODUCT_GROUP'].unique())
+            prod_options = [p for p in products if (prod_search.strip().lower() in p.lower())] if prod_search else products
+            sel_product = st.selectbox("Product Group", prod_options)
+
+            # Recommended tactic (top-1)
+            rec = best_df[best_df['PRODUCT_GROUP'] == sel_product]
+            st.write("Recommended tactic for selected product:")
+            display_cols = [c for c in [
+                'PRODUCT_GROUP','TACTIC_TYPE','pred_approval_prob','pred_expected_score',
+                'score','approval_rate','claim_count','total_claim_amount'
+            ] if c in rec.columns]
+            st.dataframe(rec[display_cols], hide_index=True, width='stretch')
+            if not rec.empty:
+                mm1, mm2 = st.columns(2)
+                if 'pred_approval_prob' in rec.columns:
+                    mm1.metric("Pred. Approval", f"{float(rec['pred_approval_prob'].iloc[0]):.2f}")
+                rank_metric = 'pred_expected_score' if 'pred_expected_score' in rec.columns else ('score' if 'score' in rec.columns else None)
+                if rank_metric:
+                    mm2.metric("Expected Score", f"{float(rec[rank_metric].iloc[0]):.2f}")
+
+            # Top tactics list for the product
+            prod_df = full_df[full_df['PRODUCT_GROUP'] == sel_product].copy()
+            rank_col = 'pred_expected_score' if 'pred_expected_score' in prod_df.columns else 'score'
+            prod_df = prod_df.sort_values(rank_col, ascending=False)
+            show_cols = [c for c in [
+                'TACTIC_TYPE','pred_approval_prob','pred_expected_score','score','approval_rate',
+                'claim_count','total_claim_amount','approved_count','pending_count','rejected_count'
+            ] if c in prod_df.columns]
+            st.write("Top tactics by expected effectiveness:")
+            top_n = st.slider("Show top N tactics", 5, 20, 10)
+            st.dataframe(prod_df[show_cols].head(top_n), hide_index=True, width='stretch')
+
+            # Downloads
+            st.download_button(
+                label="📥 Download best-per-product",
+                data=best_df.to_csv(index=False),
+                file_name=os.path.basename(best_model_path if os.path.exists(best_model_path) else best_heur_path),
+                mime="text/csv"
+            )
+            st.download_button(
+                label="📥 Download full tactic scores",
+                data=full_df.to_csv(index=False),
+                file_name=os.path.basename(full_model_path if os.path.exists(full_model_path) else full_heur_path),
+                mime="text/csv"
+            )
+    except Exception as e:
+        st.error(f"Error loading Task 3 outputs: {e}")
+        st.code(traceback.format_exc())
