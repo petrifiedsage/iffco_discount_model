@@ -1,71 +1,98 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-*.egg-info/
-dist/
-build/
-*.egg
+# ============================================================================
+# WHITELIST APPROACH: Ignore everything, then explicitly allow needed files
+# ============================================================================
 
-# Virtual Environment
-venv/
-env/
-ENV/
-.venv
+# Ignore everything by default
+*
+!*/
+
+# ============================================================================
+# ALLOWED FILES
+# ============================================================================
+
+# Root level files
+!.gitignore
+!requirements.txt
+!README.md
+!app.py
+!app_task2_inference_corrected.py
+
+# Documentation
+!docs/
+!docs/**
+
+# Scripts (only prediction and training)
+!scripts/
+!scripts/__init__.py
+!scripts/predict_task3_2026.py
+!scripts/training/
+!scripts/training/__init__.py
+!scripts/training/task3_best_tactic_classifier.py
+
+# Models directory - specific files only
+!models/
+!models/task1_discount_regressor_v3.pkl
+!models/task1_metadata_v3.pkl
+!models/task2_reboot_model.pkl
+!models/task2_reboot_metadata.pkl
+!models/task2_reboot_states.pkl
+!models/history_monthly.pkl
+!models/product_seasonality_correct.csv
+!models/customer_segments.csv
+
+# Output directory - specific files only
+!output/
+!output/task2_improved_v4_ensemble_predictions.csv
+!output/task2_2025_validation_retrained.csv
+!output/task2_2026_forecast_retrained.csv
+
+# Results directory - Task 3 files only
+!results/
+!results/task3_best_tactic_per_product_model.csv
+!results/task3_best_tactic_per_product.csv
+!results/task3_tactic_scores_model.csv
+!results/task3_tactic_scores_full.csv
+!results/task3_2026_tactic_recommendations.csv
+!results/task3_2026_tactic_scores.csv
+!results/task3_model_metrics.json
+
+# ============================================================================
+# ALWAYS IGNORE (even if whitelisted above)
+# ============================================================================
+
+# Python cache
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.Python
+**/*.so
+**/*.egg
+**/*.egg-info/
+
+# Virtual environments
+**/venv/
+**/env/
+**/ENV/
+**/.venv/
 
 # IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+**/.vscode/
+**/.idea/
+**/*.swp
+**/*.swo
 
-# Jupyter Notebook
-.ipynb_checkpoints/
-*.ipynb_checkpoints
+# OS
+**/.DS_Store
+**/Thumbs.db
 
-# Data files (large datasets)
-data/
-*.csv
-!requirements.txt
-
-# Model files (can be large)
-models/*.pkl
-models/*.txt
-*.pkl
-
-# Output files
-output/
-results/
-*.log
-
-# OS specific
-.DS_Store
-Thumbs.db
-*.bak
-
-# Streamlit
+# Environment
+**/.env
+**/.env.local
 .streamlit/secrets.toml
 
-# Testing
-test_results*.csv
-*.pyc
+# Logs
+**/*.log
 
-# Archive (optional - uncomment if you want to exclude)
-# archive/
-
-# Temporary files
-*.tmp
-*.temp
-reorganize.ps1
-
-# Environment variables
-.env
-.env.local
-
-# Large files
-*.h5
-*.hdf5
-*.parquet
+# Data files (raw datasets)
+data/

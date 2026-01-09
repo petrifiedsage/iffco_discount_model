@@ -1,0 +1,313 @@
+PRODUCT_GROUP,MONTH,SEASONALITY_INDEX,CONFIDENCE,RECORDS
+Bakery Ingredients,1,0.6717,0.46,23
+Bakery Ingredients,2,0.8536,0.6,30
+Bakery Ingredients,3,1.4535,1.0,82
+Bakery Ingredients,4,0.6883,1.0,83
+Bakery Ingredients,5,1.1485,1.0,57
+Bakery Ingredients,6,1.0012,1.0,69
+Bakery Ingredients,7,0.3321,0.66,33
+Bakery Ingredients,8,1.2266,1.0,69
+Bakery Ingredients,9,1.1596,1.0,62
+Bakery Ingredients,10,1.3596,1.0,57
+Bakery Ingredients,11,0.9454,1.0,62
+Bakery Ingredients,12,1.1599,0.98,49
+Beverage Solutions,1,1.0,0.5,0
+Beverage Solutions,2,1.0,0.5,0
+Beverage Solutions,3,1.8383,1.0,67
+Beverage Solutions,4,1.8216,1.0,72
+Beverage Solutions,5,1.789,0.54,27
+Beverage Solutions,6,0.2557,1.0,74
+Beverage Solutions,7,1.0,0.5,0
+Beverage Solutions,8,0.5039,0.86,43
+Beverage Solutions,9,0.4466,0.34,17
+Beverage Solutions,10,0.3449,0.02,1
+Beverage Solutions,11,1.0,0.5,0
+Beverage Solutions,12,1.0,0.5,0
+Beverages,1,1.0956,1.0,224
+Beverages,2,0.769,1.0,215
+Beverages,3,1.4882,1.0,387
+Beverages,4,0.7938,1.0,273
+Beverages,5,0.6537,1.0,322
+Beverages,6,0.9107,1.0,303
+Beverages,7,0.8086,1.0,250
+Beverages,8,1.192,1.0,348
+Beverages,9,1.3537,1.0,227
+Beverages,10,0.8091,1.0,354
+Beverages,11,1.1773,1.0,381
+Beverages,12,0.9482,1.0,295
+Biscuits,1,0.9095,1.0,1367
+Biscuits,2,2.1232,1.0,1443
+Biscuits,3,1.2978,1.0,2539
+Biscuits,4,0.9854,1.0,2182
+Biscuits,5,0.879,1.0,2145
+Biscuits,6,0.8988,1.0,2446
+Biscuits,7,0.7216,1.0,1427
+Biscuits,8,0.9402,1.0,2428
+Biscuits,9,0.8875,1.0,1912
+Biscuits,10,0.741,1.0,2340
+Biscuits,11,0.7655,1.0,2325
+Biscuits,12,0.8504,1.0,1821
+Chocolate,1,0.9503,1.0,935
+Chocolate,2,0.9131,1.0,941
+Chocolate,3,1.5482,1.0,1717
+Chocolate,4,0.8335,1.0,1468
+Chocolate,5,0.9793,1.0,1368
+Chocolate,6,1.1858,1.0,1531
+Chocolate,7,0.8678,1.0,951
+Chocolate,8,1.2424,1.0,1602
+Chocolate,9,0.9192,1.0,1226
+Chocolate,10,0.8114,1.0,1513
+Chocolate,11,0.8275,1.0,1503
+Chocolate,12,0.9214,1.0,1234
+Coatings,1,1.0,0.5,0
+Coatings,2,1.0,0.5,0
+Coatings,3,1.0,0.5,0
+Coatings,4,1.0604,0.02,1
+Coatings,5,1.1093,0.02,1
+Coatings,6,1.1647,0.02,1
+Coatings,7,1.0,0.5,0
+Coatings,8,0.6656,0.02,1
+Coatings,9,1.0,0.5,0
+Coatings,10,1.0,0.5,0
+Coatings,11,1.0,0.5,0
+Coatings,12,1.0,0.5,0
+Condiments - Wet,1,0.7203,1.0,594
+Condiments - Wet,2,2.4987,1.0,652
+Condiments - Wet,3,1.5063,1.0,1307
+Condiments - Wet,4,1.0063,1.0,1180
+Condiments - Wet,5,0.7695,1.0,1113
+Condiments - Wet,6,0.7375,1.0,1210
+Condiments - Wet,7,0.6622,1.0,637
+Condiments - Wet,8,0.956,1.0,1231
+Condiments - Wet,9,0.909,1.0,951
+Condiments - Wet,10,0.7278,1.0,1186
+Condiments - Wet,11,0.8054,1.0,1134
+Condiments - Wet,12,0.701,1.0,785
+Confectionary,1,0.847,1.0,753
+Confectionary,2,2.2795,1.0,782
+Confectionary,3,1.0854,1.0,1419
+Confectionary,4,1.1593,1.0,1310
+Confectionary,5,0.8594,1.0,1160
+Confectionary,6,0.9727,1.0,1299
+Confectionary,7,0.7068,1.0,826
+Confectionary,8,0.9268,1.0,1330
+Confectionary,9,0.8014,1.0,1003
+Confectionary,10,0.7072,1.0,1209
+Confectionary,11,0.734,1.0,1270
+Confectionary,12,0.9205,1.0,1061
+Cooking Ingredients,1,1.0,0.5,0
+Cooking Ingredients,2,1.0,0.04,2
+Cooking Ingredients,3,1.0,0.5,0
+Cooking Ingredients,4,1.0,0.5,0
+Cooking Ingredients,5,1.0,0.5,0
+Cooking Ingredients,6,1.0,0.5,0
+Cooking Ingredients,7,1.0,0.5,0
+Cooking Ingredients,8,1.0,0.5,0
+Cooking Ingredients,9,1.0,0.5,0
+Cooking Ingredients,10,1.0,0.5,0
+Cooking Ingredients,11,1.0,0.5,0
+Cooking Ingredients,12,1.0,0.5,0
+Creams,1,0.4487,1.0,161
+Creams,2,0.2972,1.0,127
+Creams,3,1.5316,1.0,261
+Creams,4,1.1811,1.0,189
+Creams,5,0.8992,1.0,237
+Creams,6,0.9426,1.0,299
+Creams,7,0.5612,1.0,220
+Creams,8,1.7194,1.0,315
+Creams,9,1.6676,1.0,172
+Creams,10,1.0783,1.0,234
+Creams,11,0.8416,1.0,261
+Creams,12,0.8315,1.0,149
+Eggs,1,2.0103,1.0,441
+Eggs,2,2.196,1.0,394
+Eggs,3,1.0351,1.0,721
+Eggs,4,1.6639,1.0,813
+Eggs,5,0.8764,1.0,656
+Eggs,6,0.7411,1.0,855
+Eggs,7,0.6967,1.0,434
+Eggs,8,0.6624,1.0,876
+Eggs,9,0.5749,1.0,664
+Eggs,10,0.4925,1.0,863
+Eggs,11,0.493,1.0,718
+Eggs,12,0.5578,1.0,617
+Fats,1,0.8633,1.0,255
+Fats,2,0.8206,1.0,203
+Fats,3,1.5743,1.0,551
+Fats,4,1.1303,1.0,435
+Fats,5,0.9233,1.0,440
+Fats,6,0.7591,1.0,526
+Fats,7,0.6705,1.0,253
+Fats,8,1.3243,1.0,516
+Fats,9,1.7689,1.0,410
+Fats,10,0.8442,1.0,494
+Fats,11,0.7783,1.0,449
+Fats,12,0.5429,1.0,385
+Flour,1,0.8574,1.0,869
+Flour,2,1.9093,1.0,834
+Flour,3,1.9146,1.0,1703
+Flour,4,1.1659,1.0,1590
+Flour,5,0.7448,1.0,1494
+Flour,6,0.7088,1.0,1605
+Flour,7,0.6806,1.0,928
+Flour,8,0.7922,1.0,1650
+Flour,9,0.9179,1.0,1269
+Flour,10,0.7646,1.0,1552
+Flour,11,0.7589,1.0,1581
+Flour,12,0.7851,1.0,1224
+Fresh Meat Products,1,1.0183,1.0,552
+Fresh Meat Products,2,1.1447,1.0,474
+Fresh Meat Products,3,1.7412,1.0,801
+Fresh Meat Products,4,1.5876,1.0,928
+Fresh Meat Products,5,1.0807,1.0,855
+Fresh Meat Products,6,0.807,1.0,966
+Fresh Meat Products,7,0.7116,1.0,464
+Fresh Meat Products,8,0.9659,1.0,958
+Fresh Meat Products,9,0.8969,1.0,740
+Fresh Meat Products,10,0.6272,1.0,959
+Fresh Meat Products,11,0.614,1.0,959
+Fresh Meat Products,12,0.8051,1.0,741
+Frozen Bakery Products,1,0.4267,1.0,628
+Frozen Bakery Products,2,3.551,1.0,658
+Frozen Bakery Products,3,1.2622,1.0,1261
+Frozen Bakery Products,4,1.108,1.0,1160
+Frozen Bakery Products,5,0.7014,1.0,1052
+Frozen Bakery Products,6,0.716,1.0,1117
+Frozen Bakery Products,7,0.5113,1.0,636
+Frozen Bakery Products,8,0.7608,1.0,1165
+Frozen Bakery Products,9,0.9843,1.0,941
+Frozen Bakery Products,10,0.6777,1.0,1062
+Frozen Bakery Products,11,0.6551,1.0,1045
+Frozen Bakery Products,12,0.6455,1.0,876
+Fruit & Veg Conc & Preparation,1,0.8326,1.0,256
+Fruit & Veg Conc & Preparation,2,1.2386,1.0,272
+Fruit & Veg Conc & Preparation,3,1.9688,1.0,619
+Fruit & Veg Conc & Preparation,4,1.0682,1.0,488
+Fruit & Veg Conc & Preparation,5,0.8363,1.0,470
+Fruit & Veg Conc & Preparation,6,0.7968,1.0,419
+Fruit & Veg Conc & Preparation,7,0.6166,1.0,308
+Fruit & Veg Conc & Preparation,8,0.9275,1.0,545
+Fruit & Veg Conc & Preparation,9,1.0632,1.0,432
+Fruit & Veg Conc & Preparation,10,1.079,1.0,502
+Fruit & Veg Conc & Preparation,11,0.8153,1.0,446
+Fruit & Veg Conc & Preparation,12,0.757,1.0,420
+Home Care,1,1.0,0.5,0
+Home Care,2,1.0,0.5,0
+Home Care,3,1.4604,0.02,1
+Home Care,4,1.0,0.5,0
+Home Care,5,1.0,0.5,0
+Home Care,6,1.0,0.5,0
+Home Care,7,1.0,0.5,0
+Home Care,8,1.0,0.5,0
+Home Care,9,1.0,0.5,0
+Home Care,10,1.0,0.5,0
+Home Care,11,0.5396,0.04,2
+Home Care,12,1.0,0.5,0
+Ice creams,1,1.134,1.0,2109
+Ice creams,2,3.4147,1.0,2662
+Ice creams,3,0.9551,1.0,3533
+Ice creams,4,0.9064,1.0,3476
+Ice creams,5,0.8666,1.0,3096
+Ice creams,6,0.8355,1.0,3656
+Ice creams,7,0.7067,1.0,2342
+Ice creams,8,0.8589,1.0,3788
+Ice creams,9,0.7922,1.0,2921
+Ice creams,10,0.5108,1.0,3604
+Ice creams,11,0.5193,1.0,3549
+Ice creams,12,0.5,1.0,2726
+Oils,1,0.7748,1.0,1102
+Oils,2,1.6538,1.0,1075
+Oils,3,1.9064,1.0,2053
+Oils,4,1.1446,1.0,1898
+Oils,5,0.6966,1.0,1787
+Oils,6,0.8694,1.0,1933
+Oils,7,0.5263,1.0,1145
+Oils,8,0.9475,1.0,2044
+Oils,9,1.1296,1.0,1480
+Oils,10,0.7861,1.0,1843
+Oils,11,0.7982,1.0,1810
+Oils,12,0.7666,1.0,1438
+Pasta Dry,1,1.0,0.5,0
+Pasta Dry,2,1.0,0.5,0
+Pasta Dry,3,1.6021,0.04,2
+Pasta Dry,4,0.9466,0.06,3
+Pasta Dry,5,0.8317,0.06,3
+Pasta Dry,6,0.6197,0.04,2
+Pasta Dry,7,1.0,0.5,0
+Pasta Dry,8,1.0,0.5,0
+Pasta Dry,9,1.0,0.5,0
+Pasta Dry,10,1.0,0.5,0
+Pasta Dry,11,1.0,0.5,0
+Pasta Dry,12,1.0,0.5,0
+Personal Wash,1,0.8772,0.1,5
+Personal Wash,2,0.4207,0.12,6
+Personal Wash,3,1.2634,0.38,19
+Personal Wash,4,0.5736,0.18,9
+Personal Wash,5,0.927,0.18,9
+Personal Wash,6,1.3914,0.2,10
+Personal Wash,7,0.8715,0.14,7
+Personal Wash,8,1.2226,0.3,15
+Personal Wash,9,0.927,0.38,19
+Personal Wash,10,1.0253,0.26,13
+Personal Wash,11,1.2789,0.18,9
+Personal Wash,12,1.2214,0.24,12
+Plant Based Meat,1,0.0963,0.12,6
+Plant Based Meat,2,10.2426,0.3,15
+Plant Based Meat,3,0.1219,0.32,16
+Plant Based Meat,4,0.0445,0.32,16
+Plant Based Meat,5,0.0525,0.3,15
+Plant Based Meat,6,0.0732,0.14,7
+Plant Based Meat,7,0.109,0.16,8
+Plant Based Meat,8,0.0538,0.14,7
+Plant Based Meat,9,1.0,0.5,0
+Plant Based Meat,10,0.0178,0.04,2
+Plant Based Meat,11,0.0233,0.16,8
+Plant Based Meat,12,0.1651,0.04,2
+Snacks,1,0.7373,1.0,1267
+Snacks,2,1.4314,1.0,1323
+Snacks,3,1.4558,1.0,2380
+Snacks,4,1.0339,1.0,2182
+Snacks,5,1.0143,1.0,2077
+Snacks,6,0.9412,1.0,2259
+Snacks,7,0.8793,1.0,1319
+Snacks,8,1.122,1.0,2248
+Snacks,9,0.9809,1.0,1686
+Snacks,10,0.7747,1.0,2204
+Snacks,11,0.7913,1.0,2199
+Snacks,12,0.8381,1.0,1732
+Traded goods-Non IFFCO,1,1.0,0.5,0
+Traded goods-Non IFFCO,2,1.0,0.5,0
+Traded goods-Non IFFCO,3,0.7365,0.36,18
+Traded goods-Non IFFCO,4,1.1125,0.62,31
+Traded goods-Non IFFCO,5,1.897,0.44,22
+Traded goods-Non IFFCO,6,0.9315,0.74,37
+Traded goods-Non IFFCO,7,1.0,0.5,0
+Traded goods-Non IFFCO,8,1.1807,0.48,24
+Traded goods-Non IFFCO,9,0.1418,0.18,9
+Traded goods-Non IFFCO,10,1.0,0.5,0
+Traded goods-Non IFFCO,11,1.0,0.5,0
+Traded goods-Non IFFCO,12,1.0,0.5,0
+Vinegar,1,1.1812,0.7,35
+Vinegar,2,0.6574,0.54,27
+Vinegar,3,1.3935,1.0,80
+Vinegar,4,0.9675,1.0,70
+Vinegar,5,0.869,1.0,77
+Vinegar,6,1.0772,1.0,94
+Vinegar,7,0.7721,0.68,34
+Vinegar,8,1.1018,1.0,80
+Vinegar,9,1.1883,1.0,63
+Vinegar,10,1.3868,1.0,60
+Vinegar,11,0.672,1.0,56
+Vinegar,12,0.7332,0.88,44
+Wafers,1,0.9738,1.0,648
+Wafers,2,2.1012,1.0,709
+Wafers,3,1.3195,1.0,1303
+Wafers,4,1.101,1.0,1132
+Wafers,5,0.8023,1.0,1043
+Wafers,6,0.8958,1.0,1188
+Wafers,7,0.7636,1.0,729
+Wafers,8,0.9153,1.0,1182
+Wafers,9,0.8369,1.0,893
+Wafers,10,0.8148,1.0,1107
+Wafers,11,0.5977,1.0,1131
+Wafers,12,0.878,1.0,900

@@ -1,0 +1,24 @@
+{
+  "accuracy": 0.9955707129312541,
+  "f1": 0.9977451571306104,
+  "roc_auc": 0.9934958106755207,
+  "train_samples": 847990,
+  "val_samples": 211998,
+  "positive_rate_val": 0.9835894678251682,
+  "features_used": [
+    "TACTIC_TYPE",
+    "PRODUCT_GROUP",
+    "PRODUCT_SUB_GROUP",
+    "BRAND",
+    "CHANNEL_GROUP",
+    "COUNTRY",
+    "TERRITORY",
+    "DEAL_TYPE",
+    "MONTH",
+    "PERIOD",
+    "AMENDED_DEAL_AMOUNT",
+    "ADJUSTMENT_VALUE_AMOUNT",
+    "GL_CODE",
+    "DATA_SOURCE"
+  ]
+}
