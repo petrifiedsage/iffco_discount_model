@@ -17,7 +17,7 @@ st.set_page_config(
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), 'models')
 
-st.title("🚀 IFFCO Intelligent Trade Planner (V7 Enterprise)")
+st.title("IFFCO Intelligent Trade Planner")
 
 # --- SIDEBAR & LOADING ---
 st.sidebar.header("⚙️ System Status")
@@ -144,12 +144,11 @@ with tab1:
 # TAB 2: SALES FORECASTING (CORRECTED MODEL)
 # ==========================================
 with tab2:
-    st.subheader("Sales Forecasting (Corrected Model)")
-    st.caption("Uses Contract_Claim_Dump data with actual product categories")
-
     tab_forecast, tab_val2025, tab_forecast2026 = st.tabs(["On-Demand Forecast", "2025 Validation", "2026 Forecast"])
 
     with tab_forecast:
+        st.subheader("📊 On-Demand Sales Forecasting")
+        st.caption("Generate sales forecasts per customer + product using the corrected model.")
         if metadata and task2_model:
             c1, c2, c3 = st.columns(3)
 
@@ -195,8 +194,8 @@ with tab2:
                             avg_seasonality = np.mean([f['seasonality'] for f in forecasts])
 
                             m1, m2, m3 = st.columns(3)
-                            m1.metric("Total Forecast", f"${total_forecast:,.0f}")
-                            m2.metric("Avg Monthly", f"${total_forecast/len(forecasts):,.0f}")
+                            m1.metric("Total Forecast", f"AED {total_forecast:,.0f}")
+                            m2.metric("Avg Monthly", f"AED {total_forecast/len(forecasts):,.0f}")
                             m3.metric("Avg Seasonality", f"{avg_seasonality:.2f}x")
 
                             forecast_df = pd.DataFrame(forecasts)
@@ -218,7 +217,7 @@ with tab2:
                             st.dataframe(
                                 forecast_df[['month_name', 'forecast', 'seasonality', 'confidence']]
                                 .rename(columns={'month_name': 'Month', 'forecast': 'Forecast (AED)', 'seasonality': 'Seasonality', 'confidence': 'Confidence'})
-                                .style.format({'Forecast (AED)': '${:,.2f}', 'Seasonality': '{:.2f}x', 'Confidence': '{:.0%}'}),
+                                .style.format({'Forecast (AED)': 'AED {:,.2f}', 'Seasonality': '{:.2f}x', 'Confidence': '{:.0%}'}),
                                 hide_index=True,
                                 width='stretch'
                             )
@@ -247,9 +246,9 @@ with tab2:
             with m2:
                 st.metric("Mean APE", f"{val_df['APE'].mean():.2f}%")
             with m3:
-                st.metric("Actual Total (2025)", f"${val_df['TOTAL_SALES'].sum():,.0f}")
+                st.metric("Actual Total (2025)", f"AED {val_df['TOTAL_SALES'].sum():,.0f}")
             with m4:
-                st.metric("Predicted Total (2025)", f"${val_df['PREDICTED_SALES'].sum():,.0f}")
+                st.metric("Predicted Total (2025)", f"AED {val_df['PREDICTED_SALES'].sum():,.0f}")
 
             col1, col2 = st.columns(2)
             with col1:
@@ -266,8 +265,8 @@ with tab2:
                 filtered_val = filtered_val[filtered_val['SEASON'] == selected_season_val]
 
             display_val = filtered_val[['PRODUCT_GROUP', 'SEASON', 'TOTAL_SALES', 'PREDICTED_SALES', 'APE']].copy()
-            display_val['TOTAL_SALES'] = display_val['TOTAL_SALES'].apply(lambda x: f"${x:,.0f}" if pd.notna(x) else "N/A")
-            display_val['PREDICTED_SALES'] = display_val['PREDICTED_SALES'].apply(lambda x: f"${x:,.0f}" if pd.notna(x) else "N/A")
+            display_val['TOTAL_SALES'] = display_val['TOTAL_SALES'].apply(lambda x: f"AED {x:,.0f}" if pd.notna(x) else "N/A")
+            display_val['PREDICTED_SALES'] = display_val['PREDICTED_SALES'].apply(lambda x: f"AED {x:,.0f}" if pd.notna(x) else "N/A")
             display_val['APE'] = display_val['APE'].apply(lambda x: f"{x:.2f}%" if pd.notna(x) else "N/A")
 
             st.dataframe(display_val, hide_index=True, width='stretch')
@@ -305,7 +304,7 @@ with tab2:
             m1, m2, m3 = st.columns(3)
             with m1:
                 total_2026 = forecast_2026[numeric_cols].sum().sum() if numeric_cols[0] in forecast_2026.columns else 0
-                st.metric("Total 2026 Forecast", f"${total_2026:,.0f}")
+                st.metric("Total 2026 Forecast", f"AED {total_2026:,.0f}")
             with m2:
                 st.metric("Products Forecasted", f"{len(forecast_2026)}")
             with m3:
@@ -315,7 +314,7 @@ with tab2:
             display_full = forecast_sorted[['PRODUCT_GROUP'] + [c for c in numeric_cols if c in forecast_sorted.columns]].copy()
             for col in numeric_cols:
                 if col in display_full.columns:
-                    display_full[col] = display_full[col].apply(lambda x: f"${x:,.0f}" if pd.notna(x) else "N/A")
+                    display_full[col] = display_full[col].apply(lambda x: f"AED {x:,.0f}" if pd.notna(x) else "N/A")
 
             st.dataframe(display_full, hide_index=True, width='stretch')
 
@@ -382,8 +381,7 @@ with tab3:
                 'claim_count','total_claim_amount','approved_count','pending_count','rejected_count'
             ] if c in prod_df.columns]
             st.write("Top tactics by expected effectiveness:")
-            top_n = st.slider("Show top N tactics", 5, 20, 10)
-            st.dataframe(prod_df[show_cols].head(top_n), hide_index=True, width='stretch')
+            st.dataframe(prod_df[show_cols].head(10), hide_index=True, width='stretch')
 
             # Downloads
             st.download_button(
