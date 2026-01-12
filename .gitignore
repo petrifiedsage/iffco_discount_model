@@ -96,3 +96,7 @@
 
 # Data files (raw datasets)
 data/
+
+# Archive and reorganization scripts
+archive_backup_*/
+reorganize*.ps1
