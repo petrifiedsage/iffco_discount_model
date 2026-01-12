@@ -204,6 +204,18 @@ pip install -r requirements.txt
 
 ## 🚀 Usage
 
+### 0. Setup (One-time)
+
+Install dependencies:
+
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+---
+
 ### 1. Run Streamlit App (Recommended)
 
 Launch the interactive web application:
@@ -221,13 +233,62 @@ streamlit run app.py
 
 ---
 
-### 2. Train Task 3 Model (TACTIC Classifier)
+### 2. Train Task 1 Model (Discount Optimizer)
 
-Train the approval classifier and generate tactic scores:
+Train the discount prediction model on contract/rebate data:
+
+```powershell
+python task1_discount_pipeline.py
+```
+
+**Prerequisites**:
+- Place contract data at `data/contracts.xls` (or `.xlsx`)
+- Should contain columns: customer, product, discount/rebate amount, etc.
+
+**Outputs**:
+- `models/task1_discount_regressor_v3.pkl`
+- `models/task1_metadata_v3.pkl`
+
+**Optional CLI arguments**:
+```powershell
+python task1_discount_pipeline.py --data-path data/contracts.xls --sheet-name Sheet1
+```
+
+---
+
+### 3. Train Task 2 Model (Sales Forecasting)
+
+Retrain the sales forecast model on 2022-2024 data and validate on 2025:
+
+```powershell
+python scripts/training/train_task2_corrected.py
+```
+
+**Prerequisites**:
+- Contract claim dump CSV in `data/csv/` with columns:
+  - `CUSTOMER`, `PRODUCT_GROUP`, `DATE`, `SALES`, `CLAIM_STATUS`
+
+**Outputs**:
+- `models/task2_reboot_model.pkl`
+- `models/task2_reboot_metadata.pkl`
+- `models/task2_reboot_states.pkl`
+- `models/history_monthly.pkl`
+- `output/task2_2025_validation_retrained.csv`
+- `output/task2_2026_forecast_retrained.csv`
+
+---
+
+### 4. Train Task 3 Model (TACTIC Classifier)
+
+Train the approval classifier and generate tactic effectiveness scores:
 
 ```powershell
 python scripts/training/task3_best_tactic_classifier.py
 ```
+
+**Prerequisites**:
+- TACTIC plans: `data/csv/TACTIC_*_TACTIC_PLAN_DIMNS*.csv`
+- TACTIC claims: `data/csv/TACTIC_*_CLAIMS_DIMNS*.csv`
 
 **Outputs**:
 - `results/task3_best_tactic_per_product_model.csv`
@@ -236,21 +297,35 @@ python scripts/training/task3_best_tactic_classifier.py
 
 ---
 
-### 3. Generate 2026 Tactic Predictions
+### 5. Generate 2026 Tactic Predictions
 
-Predict best tactics for 2026 with optional sales forecast weighting:
+Predict best tactics for 2026 with optional sales forecast volume weighting:
 
 ```powershell
 python scripts/predict_task3_2026.py
 ```
 
+**Prerequisites**:
+- Task 3 trained model (run step 4 first)
+- Optional: `output/task2_2026_forecast_retrained.csv` (for volume weighting)
+
 **Outputs**:
 - `results/task3_2026_tactic_recommendations.csv` (top-1 per product)
 - `results/task3_2026_tactic_scores.csv` (all tactics scored)
 
-**Configuration**:
-- Set `WEIGHT_BY_FORECAST = True` in script to blend with 2026 sales volume
-- Requires `output/task2_2026_forecast_retrained.csv`
+**Configuration** (edit `scripts/predict_task3_2026.py`):
+```python
+WEIGHT_BY_FORECAST = True  # Set to False to ignore 2026 sales volume
+```
+
+---
+
+### Recommended Workflow
+
+1. **First time**: Run steps 2, 3, 4 to train all models
+2. **Regular use**: Run step 1 (Streamlit app) to view predictions
+3. **Retrain**: Run step 4 to update tactic recommendations with new claims
+4. **2026 Update**: Run step 5 to regenerate 2026 tactic predictions after forecast updates
 
 ---
 
