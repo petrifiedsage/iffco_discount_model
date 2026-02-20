@@ -13,7 +13,8 @@ import time
 st.set_page_config(
     page_title="IFFCO Trade Strategy Engine",
     page_icon="🧊",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), 'models')
@@ -95,7 +96,7 @@ discount_model, disc_meta, task2_model, metadata, states, seasonality_df, histor
 
 if discount_model and task2_model:
     st.sidebar.success("✅ Models Loaded")
-    st.sidebar.caption(f"Task 2 Test APE: {metadata.get('test_median_ape', 0):.1f}%")
+    #st.sidebar.caption(f"Task 2 Test APE: {metadata.get('test_median_ape', 0):.1f}%")
 else:
     st.sidebar.warning("⚠️ Models missing. Please check file names.")
 
